@@ -1,0 +1,24 @@
+# R Package Dependencies for MDVRPTWH Shiny Application
+# Install these packages using: install.packages(c("package1", "package2", ...))
+
+# Core Shiny packages
+shiny
+shinydashboard
+
+# Data manipulation and processing
+dplyr
+
+# Visualization
+plotly
+RColorBrewer
+
+# Data display
+DT
+
+# Testing framework
+testthat
+
+# Optional: For enhanced functionality
+# devtools       # For development tools
+# profvis        # For performance profiling
+# roxygen2       # For documentation generation
