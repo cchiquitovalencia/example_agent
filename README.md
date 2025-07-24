@@ -1,6 +1,6 @@
-# Vehicle Routing Problem (VRP) Heuristics
+# Vehicle Routing Problem (VRP) Heuristics in R
 
-This repository contains implementations of three different heuristics for solving the Vehicle Routing Problem (VRP):
+This repository contains R implementations of three different heuristics for solving the Vehicle Routing Problem (VRP):
 
 1. **Nearest Neighbor Heuristic** - A constructive greedy algorithm
 2. **Clarke-Wright Savings Algorithm** - A classical VRP constructive heuristic  
@@ -8,10 +8,10 @@ This repository contains implementations of three different heuristics for solvi
 
 ## Files Description
 
-- `nearest_neighbor_heuristic.py` - Nearest Neighbor implementation
-- `savings_algorithm.py` - Clarke-Wright Savings Algorithm implementation
-- `two_opt_improvement.py` - 2-opt local search improvement heuristic
-- `vrp_example.py` - Example script demonstrating all heuristics and comparisons
+- `nearest_neighbor_heuristic.R` - Nearest Neighbor implementation
+- `savings_algorithm.R` - Clarke-Wright Savings Algorithm implementation
+- `two_opt_improvement.R` - 2-opt local search improvement heuristic
+- `vrp_example.R` - Example script demonstrating all heuristics and comparisons
 
 ## Problem Definition
 
@@ -72,41 +72,38 @@ The Vehicle Routing Problem involves:
 
 ### Running Individual Heuristics
 
-```python
-# Nearest Neighbor
-from nearest_neighbor_heuristic import NearestNeighborVRP
+```r
+# Source the required file
+source("nearest_neighbor_heuristic.R")
 
-depot = (0, 0)
-customers = [(4, 4), (6, 2), (8, 6)]
-demands = [3, 5, 2]
-vehicle_capacity = 10
-num_vehicles = 2
+# Define problem instance
+depot <- c(0, 0)
+customers <- matrix(c(4, 4, 6, 2, 8, 6), ncol = 2, byrow = TRUE)
+demands <- c(3, 5, 2)
+vehicle_capacity <- 10
+num_vehicles <- 2
 
-solver = NearestNeighborVRP(depot, customers, demands, vehicle_capacity, num_vehicles)
-solution = solver.solve()
+# Solve using Nearest Neighbor
+solution <- nearest_neighbor_vrp(depot, customers, demands, vehicle_capacity, num_vehicles)
 ```
 
-```python
+```r
 # Clarke-Wright Savings
-from savings_algorithm import SavingsAlgorithmVRP
-
-solver = SavingsAlgorithmVRP(depot, customers, demands, vehicle_capacity, num_vehicles)
-solution = solver.solve()
+source("savings_algorithm.R")
+solution <- savings_algorithm_vrp(depot, customers, demands, vehicle_capacity, num_vehicles)
 ```
 
-```python
+```r
 # 2-opt Improvement
-from two_opt_improvement import TwoOptVRP
-
-initial_routes = [[0, 1], [2]]  # Initial solution
-solver = TwoOptVRP(depot, customers, demands, vehicle_capacity)
-improved_solution = solver.improve_solution(initial_routes)
+source("two_opt_improvement.R")
+initial_routes <- list(c(1, 2), c(3))  # Initial solution
+improved_solution <- improve_solution_2opt(initial_routes, depot, customers, demands, vehicle_capacity)
 ```
 
 ### Running Comprehensive Example
 
 ```bash
-python vrp_example.py
+Rscript vrp_example.R
 ```
 
 This will:
@@ -115,18 +112,56 @@ This will:
 - Demonstrate a hybrid approach combining multiple methods
 - Provide detailed analysis and recommendations
 
+### Interactive Usage in R
+
+```r
+# Source all files
+source("vrp_example.R")
+
+# Run comparison
+results <- compare_vrp_heuristics()
+
+# Run hybrid approach
+hybrid_result <- demonstrate_hybrid_approach()
+
+# Print summary
+print_heuristics_summary()
+```
+
 ## Solution Format
 
 All heuristics return solutions in the same format:
 
-```python
-{
-    'routes': [[0, 2], [1, 3]],  # List of routes (customer indices)
-    'total_distance': 25.4,      # Total travel distance
-    'num_vehicles_used': 2,      # Number of vehicles used
-    'unvisited_customers': [],   # Customers not served (if any)
-    'feasible': True             # Whether solution is feasible
-}
+```r
+list(
+  routes = list(c(1, 3), c(2, 4)),  # List of routes (customer indices)
+  total_distance = 25.4,            # Total travel distance
+  num_vehicles_used = 2,            # Number of vehicles used
+  unvisited_customers = integer(0), # Customers not served (if any)
+  feasible = TRUE                   # Whether solution is feasible
+)
+```
+
+## Data Structures
+
+### Input Format
+- **depot**: Vector of coordinates `c(x, y)`
+- **customers**: Matrix with 2 columns (x, y coordinates), one row per customer
+- **demands**: Vector of demand values for each customer
+- **vehicle_capacity**: Single numeric value
+- **num_vehicles**: Single integer value
+
+### Example
+```r
+depot <- c(0, 0)
+customers <- matrix(c(
+  4, 4,
+  6, 2,
+  8, 6
+), ncol = 2, byrow = TRUE)
+demands <- c(3, 5, 2)
+vehicle_capacity <- 10
+num_vehicles <- 2
 ```
 
 ## Algorithm Complexity
@@ -142,6 +177,14 @@ All heuristics return solutions in the same format:
 3. **For optimization:** Apply 2-opt to improve any initial solution
 4. **For best results:** Use hybrid approach (constructive + improvement)
 
+## Dependencies
+
+The code uses only base R functions and requires no additional packages:
+- `matrix()` for data structures
+- `rbind()`, `c()` for data manipulation
+- `sqrt()` for distance calculations
+- `sprintf()`, `cat()` for output formatting
+
 ## Example Output
 
 ```
@@ -155,12 +198,12 @@ Total demand: 43
 === Nearest Neighbor ===
 Total Distance: 45.23
 Vehicles Used: 3
-Feasible: True
+Feasible: TRUE
 
 === Clarke-Wright Savings ===
 Total Distance: 42.17
 Vehicles Used: 3
-Feasible: True
+Feasible: TRUE
 
 === Hybrid Approach ===
 Initial (Clarke-Wright): 42.17
@@ -169,11 +212,43 @@ After inter-route 2-opt: 39.92
 Total improvement: 2.25
 ```
 
+## Function Reference
+
+### Core Functions
+
+- `nearest_neighbor_vrp()` - Main nearest neighbor solver
+- `savings_algorithm_vrp()` - Main Clarke-Wright solver
+- `improve_solution_2opt()` - Intra-route 2-opt improvement
+- `inter_route_2opt()` - Inter-route 2-opt improvement
+
+### Utility Functions
+
+- `compute_distance_matrix()` - Calculate distance matrix
+- `calculate_route_distance()` - Calculate single route distance
+- `get_route_info()` - Get detailed route information
+- `is_route_feasible()` - Check capacity constraints
+
+### Example Functions
+
+- `run_nearest_neighbor_example()` - Example for nearest neighbor
+- `run_savings_algorithm_example()` - Example for savings algorithm
+- `run_two_opt_example()` - Example for 2-opt improvement
+- `compare_vrp_heuristics()` - Compare all heuristics
+- `demonstrate_hybrid_approach()` - Show hybrid methodology
+
 ## Extensions
 
 The code can be easily extended to support:
 - Time windows constraints
 - Multiple depots
 - Heterogeneous vehicle fleet
-- Different distance metrics
+- Different distance metrics (Manhattan, etc.)
 - Additional VRP variants
+- Custom objective functions
+
+## Performance Tips
+
+- For large instances, consider increasing `max_iterations` parameters
+- Use the hybrid approach for best solution quality
+- Start with Clarke-Wright for better initial solutions
+- Apply 2-opt improvement iteratively for continued refinement
